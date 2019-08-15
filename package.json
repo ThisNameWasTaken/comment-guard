@@ -1,0 +1,29 @@
+{
+  "name": "rollup-setup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "npx concurrently npm:rollup npm:copy-static",
+    "clean": "npx rimraf build",
+    "copy-static": "npx cpx src/static/** build",
+    "copy-static:watch": "npm run copy-static -- -w",
+    "rollup": "npx rollup -c",
+    "rollup:watch": "npm run rollup -- -w",
+    "prestart": "npm run clean",
+    "start": "npx concurrently npm:copy-static:watch npm:rollup:watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^4.1.1",
+    "cpx": "^1.5.0",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.19.4",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sass": "^1.2.2"
+  },
+  "dependencies": {}
+}
