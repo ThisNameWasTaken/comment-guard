@@ -39,11 +39,19 @@ const loadChat = () => {
   );
   chatIframe.contentDocument.body.appendChild(userAgentScriptTag);
 
-  document.addEventListener('click', () => {
-    chatIframe.style.display = window.location.pathname.startsWith('/stories/')
-      ? 'none'
-      : '';
-  });
+  const reactRoot = document.getElementById('react-root');
+
+  if (reactRoot) {
+    new MutationObserver(() => {
+      chatIframe.style.display = window.location.pathname.match(/^\/stories\/./)
+        ? 'none'
+        : '';
+    }).observe(reactRoot, {
+      childList: true,
+      subtree: false,
+      attributes: false,
+    });
+  }
 };
 
 window.addEventListener('load', loadChat, { once: true });
