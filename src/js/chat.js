@@ -85,12 +85,8 @@ export default class Chat {
   }
 
   _handleMutations() {
-    new MutationObserver(mutations => {
-      if (mutations.find(mutation => mutation.type === 'attributes')) {
-        setTimeout(this._hideOnModalDisplay, 100);
-      } else {
-        this._hideOnModalDisplay();
-      }
+    new MutationObserver(() => {
+      this._hideOnModalDisplay();
 
       this._update();
     }).observe(document.body, {

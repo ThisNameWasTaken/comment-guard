@@ -20,6 +20,10 @@ export const rootStyles = css`
     z-index: 8;
     position: fixed;
   }
+
+  [role='dialog'] {
+    z-index: 999 !important;
+  }
 `;
 
 export const chatStyles = css`
