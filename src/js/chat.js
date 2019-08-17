@@ -109,61 +109,79 @@ export default class Chat {
   }
 
   _updatePosition() {
-    if (isSmallDesktopScreen) {
-      this._setCssProp('left', `${leftSideGroupRect.left}px`);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        if (isSmallDesktopScreen) {
+          this._setCssProp('left', `${leftSideGroupRect.left}px`);
 
-      this._setCssProp('top', `${leftSideGroupRect.top}px`);
+          this._setCssProp('top', `${leftSideGroupRect.top}px`);
 
-      this._setCssProp('top-transition-duration', '0s');
+          this._setCssProp('top-transition-duration', '0s');
 
-      this._setCssProp('top-transition-delay', '0s');
-    } else {
-      document.documentElement.style.setProperty('--chat-left', `0px`);
+          this._setCssProp('top-transition-delay', '0s');
+        } else {
+          document.documentElement.style.setProperty('--chat-left', `0px`);
 
-      this._setCssProp('top', `${Math.max(135 - window.scrollY, 52)}px`);
+          this._setCssProp('top', `${Math.max(135 - window.scrollY, 52)}px`);
 
-      const didScrollDown = window.scrollY > window.prevScrollY;
+          const didScrollDown = window.scrollY > window.prevScrollY;
 
-      this._setCssProp('top-transition-duration', didScrollDown ? '.2s' : '0s');
+          this._setCssProp(
+            'top-transition-duration',
+            didScrollDown ? '.2s' : '0s'
+          );
 
-      this._setCssProp('top-transition-delay', didScrollDown ? '.2s' : '0s');
-    }
+          this._setCssProp(
+            'top-transition-delay',
+            didScrollDown ? '.2s' : '0s'
+          );
+        }
 
-    window.prevScrollY = window.scrollY;
+        window.prevScrollY = window.scrollY;
+      })
+    );
   }
 
   _updateSize() {
-    instagramMainContent = document.querySelector('main > * > *');
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        instagramMainContent = document.querySelector('main > * > *');
 
-    if (!instagramMainContent) return;
+        if (!instagramMainContent) return;
 
-    const leftSideGroup = document.querySelector(
-      'main > section > :last-of-type > :last-of-type'
+        const leftSideGroup = document.querySelector(
+          'main > section > :last-of-type > :last-of-type'
+        );
+
+        const _chatWidth =
+          instagramMainContent.getBoundingClientRect().left - 28;
+
+        isSmallDesktopScreen = window.innerWidth < 1595;
+
+        if (leftSideGroup) {
+          leftSideGroup.style.opacity = isSmallDesktopScreen ? '0' : '1';
+
+          leftSideGroupRect = leftSideGroup.getBoundingClientRect();
+
+          this._iframe.style.display = '';
+        } else {
+          this._iframe.style.display = isSmallDesktopScreen ? 'none' : '';
+        }
+
+        const chatWidth = isSmallDesktopScreen
+          ? leftSideGroup
+            ? leftSideGroupRect.width
+            : 287
+          : _chatWidth;
+
+        this._setCssProp(
+          'width',
+          instagramMainContent ? `${chatWidth}px` : '20vw'
+        );
+
+        this._setCssProp('height', 'calc(100vh - var(--chat-top))');
+      })
     );
-
-    const _chatWidth = instagramMainContent.getBoundingClientRect().left - 28;
-
-    isSmallDesktopScreen = window.innerWidth < 1595;
-
-    if (leftSideGroup) {
-      leftSideGroup.style.opacity = isSmallDesktopScreen ? '0' : '1';
-
-      leftSideGroupRect = leftSideGroup.getBoundingClientRect();
-
-      this._iframe.style.display = '';
-    } else {
-      this._iframe.style.display = isSmallDesktopScreen ? 'none' : '';
-    }
-
-    const chatWidth = isSmallDesktopScreen
-      ? leftSideGroup
-        ? leftSideGroupRect.width
-        : 287
-      : _chatWidth;
-
-    this._setCssProp('width', instagramMainContent ? `${chatWidth}px` : '20vw');
-
-    this._setCssProp('height', 'calc(100vh - var(--chat-top))');
   }
 
   _update() {
