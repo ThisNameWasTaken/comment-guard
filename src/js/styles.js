@@ -21,7 +21,7 @@ export const rootStyles = css`
     position: fixed;
   }
 
-  [role='dialog'] {
+  body > [role='dialog'] {
     z-index: 999 !important;
   }
 `;
