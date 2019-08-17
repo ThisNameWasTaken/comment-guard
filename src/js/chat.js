@@ -1,5 +1,5 @@
 import userAgentOverride from './userAgent';
-import { rootStyles, chatStyles } from './styles';
+import { chatStyles } from './styles';
 
 window.prevScrollY = window.scrollY;
 
@@ -98,10 +98,6 @@ export default class Chat {
 
   _init() {
     this._setupIframe();
-
-    const rootStyleTag = document.createElement('style');
-    rootStyleTag.appendChild(document.createTextNode(rootStyles));
-    document.head.appendChild(rootStyleTag);
 
     this._overrideUserAgent();
 
