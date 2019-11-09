@@ -3,36 +3,90 @@ import { Hosts } from './hosts';
 import { CommentObserver } from './commentObjserver';
 import { commentSelectors } from './selectors';
 
+import * as toxicity from '@tensorflow-models/toxicity';
+
 export class CommentGuard {
 	constructor() {
+		this.checkComments = this.checkComments.bind(this);
+		this.onDomUpdate = this.onDomUpdate.bind(this);
+		this.watchHost = this.watchHost.bind(this);
+		this.updateCommentSelector = this.updateCommentSelector.bind(this);
+		this.markAsToxic = this.markAsToxic.bind(this);
+		this.getComments = this.getComment.bind(this);
+
 		this.host = window.location.host;
 		this.prevHost = null;
+
+		this.commentsToCheck = [];
 
 		this.commentObserver = new CommentObserver(this.onDomUpdate);
 		this.commentObserver.observe();
 		this.commentSelector = null;
 
+		toxicity
+			.load(0.8, [
+				'identity_attack',
+				'insult',
+				'obscene',
+				'severe_toxicity',
+				'sexual_explicit',
+				'threat',
+				'toxicity',
+			])
+			.then(model => {
+				console.log('model loaded');
+
+				this.model = model;
+
+				this.checkComments();
+			});
+
 		this.watchHost();
 	}
 
 	onDomUpdate(mutationList, observer) {
-		mutationList.filter(Filters.YouTube).forEach(mutation => {
-			mutation.target.querySelector('#content-text').textContent;
-			const text = mutation.target.querySelector('#content-text').textContent;
+		mutationList
+			.filter(Filters.YouTube)
+			.map(mutation => this.getComment(mutation.target))
+			.forEach(comment => {
+				if (!this.commentsToCheck.find(({ text }) => text === comment.text)) {
+					this.commentsToCheck.push(comment);
+				}
+			});
 
-			console.log(text);
-			// TODO: Check if the text is toxic
+		console.log(this.commentsToCheck);
 
-			mutation.target.classList.add('is-toxic');
+		this.checkComments();
+	}
 
-			mutation.target.addEventListener(
-				'click',
-				event => {
-					mutation.target.classList.remove('is-toxic');
-				},
-				{ once: true }
-			);
+	getComment(node) {
+		return { node, text: node.querySelector('#content-text').textContent };
+	}
+
+	checkComments() {
+		console.log('try check comments');
+		if (!this.model || !this.commentsToCheck || this.commentsToCheck.length === 0) return;
+		console.log('checking comments');
+
+		this.commentsToCheck.forEach(({ node, text }) => {
+			this.model.classify(text).then(prediction => {
+				console.log(prediction);
+			});
 		});
+
+		this.commentsToCheck = [];
+	}
+
+	markAsToxic(element) {
+		element.classList.add('is-toxic');
+
+		element.addEventListener(
+			'click',
+			event => {
+				element.classList.remove('is-toxic');
+			},
+			{ once: true }
+		);
 	}
 
 	watchHost() {
