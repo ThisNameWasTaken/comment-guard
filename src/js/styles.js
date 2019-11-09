@@ -7,34 +7,47 @@ export function addRootStyles() {
 }
 
 export const rootStyles = css`
-	#inbox-iframe {
-		position: fixed;
+	.is-toxic > * {
+		visibility: hidden !important;
+	}
+
+	.is-toxic {
+		position: relative;
+		pointer-events: none;
+	}
+
+	.is-toxic::before {
+		padding: 8px;
+		position: absolute;
 		top: 0;
 		left: 0;
-		z-index: 6;
+		bottom: 0;
+		right: 0;
+		color: #fff;
+		background: #f43;
+		font-size: 16px;
+		z-index: 1;
+		text-align: center;
+
+		content: 'This content may be disturbing for some people';
+	}
+
+	.is-toxic::after {
+		position: absolute;
+		padding: 8px 16px;
 		background: #fff;
-		min-width: 293px;
-		border: 1px solid #e6e6e6;
-		transform: translateX(var(--chat-left)) translateY(var(--chat-top));
-		height: var(--chat-height);
-		width: var(--chat-width);
-		transition: transform var(--chat-top-transition-duration) ease-in-out
-			var(--chat-top-transition-delay);
-	}
+		color: #f43;
+		border-radius: 4px;
+		z-index: 2;
+		text-transform: uppercase;
+		font-weight: bold;
+		font-size: 12px;
+		pointer-events: auto;
+		bottom: 4px;
+		left: 50%;
+		transform: translateX(-50%);
+		cursor: pointer;
 
-	nav {
-		z-index: 8;
-		position: fixed;
-	}
-
-	body > [role='dialog'] {
-		z-index: 999 !important;
-	}
-`;
-
-export const chatStyles = css`
-	body {
-		background: #fff;
-		overflow-y: hidden !important;
+		content: 'Reveal';
 	}
 `;

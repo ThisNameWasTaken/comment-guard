@@ -20,9 +20,18 @@ export class CommentGuard {
 			mutation.target.querySelector('#content-text').textContent;
 			const text = mutation.target.querySelector('#content-text').textContent;
 
+			console.log(text);
 			// TODO: Check if the text is toxic
 
 			mutation.target.classList.add('is-toxic');
+
+			mutation.target.addEventListener(
+				'click',
+				event => {
+					mutation.target.classList.remove('is-toxic');
+				},
+				{ once: true }
+			);
 		});
 	}
 
