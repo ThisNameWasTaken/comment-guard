@@ -70,7 +70,12 @@ export class CommentGuard {
 
 		this.commentsToCheck.forEach(({ node, text }) => {
 			this.model.classify(text).then(prediction => {
-				console.log(prediction);
+				const isToxic = prediction[6].results[0].match;
+				console.log(isToxic);
+
+				if (isToxic) {
+					this.markAsToxic(node);
+				}
 			});
 		});
 
