@@ -3,7 +3,7 @@ import { Hosts } from './hosts';
 import { CommentObserver } from './commentObjserver';
 import { commentSelectors } from './selectors';
 
-import * as toxicity from '@tensorflow-models/toxicity';
+// import * as toxicity from '@tensorflow-models/toxicity';
 
 export class CommentGuard {
 	constructor() {
@@ -23,23 +23,23 @@ export class CommentGuard {
 		this.commentObserver.observe();
 		this.commentSelector = null;
 
-		toxicity
-			.load(0.8, [
-				'identity_attack',
-				'insult',
-				'obscene',
-				'severe_toxicity',
-				'sexual_explicit',
-				'threat',
-				'toxicity',
-			])
-			.then(model => {
-				console.log('model loaded');
-
-				this.model = model;
-
-				this.checkComments();
-			});
+		this.model = {
+			classify(text) {
+				return fetch('http://localhost:5050', {
+					method: 'POST', // *GET, POST, PUT, DELETE, etc.
+					mode: 'cors', // no-cors, *cors, same-origin
+					cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+					credentials: 'same-origin', // include, *same-origin, omit
+					headers: {
+						'Content-Type': 'application/json',
+						// 'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					redirect: 'follow', // manual, *follow, error
+					referrer: 'no-referrer', // no-referrer, *client
+					body: JSON.stringify({ text }), // body data type must match "Content-Type" header
+				}).then(res => res.json());
+			},
+		};
 
 		this.watchHost();
 	}
