@@ -1,16 +1,5 @@
-import Chat from './chat';
-import { rootStyles } from './styles';
+import { CommentGuard } from './CommentGuard';
 
-function addRootStyles() {
-  const rootStyleTag = document.createElement('style');
-  rootStyleTag.appendChild(document.createTextNode(rootStyles));
-  document.head.appendChild(rootStyleTag);
-}
-
-window.addEventListener('load', () => {
-  if (window.location.pathname.startsWith('/direct/inbox')) return;
-
-  new Chat();
-
-  addRootStyles();
+window.addEventListener('load', function init() {
+	new CommentGuard();
 });
